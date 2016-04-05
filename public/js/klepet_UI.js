@@ -147,7 +147,17 @@ $(document).ready(function() {
       $('#poslji-sporocilo').focus();
     });
   });
-
+  socket.on('dregljaj', function(dregljaj) {
+      console.log("I got poked from "+dregljaj.vzdevek);
+      $('#vsebina').jrumble();
+      //zatresi
+       $('#vsebina').trigger("startRumble");
+       //ustavi se bo 1500 ms
+       setTimeout(function() {
+  		
+  		$("#vsebina").trigger("stopRumble");
+  	}, 1500);
+  });
   socket.on('uporabniki', function(uporabniki) {
     $('#seznam-uporabnikov').empty();
     for (var i=0; i < uporabniki.length; i++) {
