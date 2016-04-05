@@ -14,8 +14,31 @@ var checkImg = function(sporocilo){
     
     if(imgRegex.test(imgs[i])){
       console.log(sporocilo);
-      sporocilo = sporocilo.replace(imgs[i],"<img class = \"margin-left-20\" src = \"" + imgs[i] + "\" width = \"200px\" alt = \" SugoiPicture \" />");
+      sporocilo = sporocilo.replace(imgs[i],"<img style = \"margin-left:20px;\" src = \"" + imgs[i] + "\" width = \"200px\" alt = \" SugoiPicture \" />");
    
+      
+    }
+  }
+  return sporocilo;
+};
+var checkYt = function(sporocilo){
+  // /.../ - zacetek konec regexa
+  // ^ - zacetek izraza
+  // ? 0 ali 1 pojavitev s
+  // \/  za frontslash
+  // .{1,} ena ali vec pojavitev
+  
+  var ytRegex = /^https?:\/\/www.youtube.com\/watch\?v=.{1,}$/i;
+  
+  var yt = sporocilo.split(" ");
+  
+  for(var i = 0; i < yt.length; i++){
+    //pogledamo ce je ustrezen sort
+    
+    if(ytRegex.test(yt[i])){
+      console.log(sporocilo);
+      var ytSrc = "https://www.youtube.com/embed/" + yt[i].split("?v=")[1];
+      sporocilo = sporocilo.replace(yt[i], "<iframe style = \"margin-left:20px;\" src = \"" + ytSrc + "\" width = \"200px\" height = \"150px\" allowfullscreen></iframe>");
       
     }
   }
@@ -27,18 +50,20 @@ function divElementEnostavniTekst(sporocilo) {
     sporocilo = sporocilo.replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace('&lt;img', '<img').replace('png\' /&gt;', 'png\' />');
     return $('<div style="font-weight: bold"></div>').html(sporocilo);
   } else {
-    var slika = checkImg(sporocilo);
+    var slika_video = checkImg(sporocilo);
+    slika_video = checkYt(slika_video);
     // pogledamo ce je dejansko bla kaksna slika v sporocilu
-    if(sporocilo.localeCompare(slika))
-      return $('<div style="font-weight: bold;"></div>').html(slika);
+    if(sporocilo.localeCompare(slika_video))
+      return $('<div style="font-weight: bold;"></div>').html(slika_video);
     else
       return $('<div style="font-weight: bold;"></div>').text(sporocilo);
   }
 }
 
 function divElementHtmlTekst(sporocilo) {
-  var slika = checkImg(sporocilo);
-  return $('<div></div>').html('<i>' + slika + '</i>');
+    var slika_video = checkImg(sporocilo);
+    slika_video = checkYt(slika_video);
+  return $('<div></div>').html('<i>' + slika_video + '</i>');
 }
 
 function procesirajVnosUporabnika(klepetApp, socket) {
