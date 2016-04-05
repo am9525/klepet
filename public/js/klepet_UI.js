@@ -1,15 +1,44 @@
+var checkImg = function(sporocilo){
+  // /.../ - zacetek konec regexa
+  // ^ - zacetek izraza
+  // ? 0 ali 1 pojavitev s
+  // \/  za frontslash
+  // .{1,} ena ali vec pojavitev
+  
+  var imgRegex = /^https?:\/\/.{1,}\.(jpg|png|gif)$/i;
+  
+  var imgs = sporocilo.split(" ");
+  
+  for(var i = 0; i < imgs.length; i++){
+    //pogledamo ce je ustrezen sort
+    
+    if(imgRegex.test(imgs[i])){
+      console.log(sporocilo);
+      sporocilo = sporocilo.replace(imgs[i],"<img class = \"margin-left-20\" src = \"" + imgs[i] + "\" width = \"200px\" alt = \" SugoiPicture \" />");
+   
+      
+    }
+  }
+  return sporocilo;
+};
 function divElementEnostavniTekst(sporocilo) {
   var jeSmesko = sporocilo.indexOf('http://sandbox.lavbic.net/teaching/OIS/gradivo/') > -1;
   if (jeSmesko) {
     sporocilo = sporocilo.replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace('&lt;img', '<img').replace('png\' /&gt;', 'png\' />');
     return $('<div style="font-weight: bold"></div>').html(sporocilo);
   } else {
-    return $('<div style="font-weight: bold;"></div>').text(sporocilo);
+    var slika = checkImg(sporocilo);
+    // pogledamo ce je dejansko bla kaksna slika v sporocilu
+    if(sporocilo.localeCompare(slika))
+      return $('<div style="font-weight: bold;"></div>').html(slika);
+    else
+      return $('<div style="font-weight: bold;"></div>').text(sporocilo);
   }
 }
 
 function divElementHtmlTekst(sporocilo) {
-  return $('<div></div>').html('<i>' + sporocilo + '</i>');
+  var slika = checkImg(sporocilo);
+  return $('<div></div>').html('<i>' + slika + '</i>');
 }
 
 function procesirajVnosUporabnika(klepetApp, socket) {
